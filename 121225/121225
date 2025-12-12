@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CRUD in HTML + JavaScript</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        table { width: 50%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid black; padding: 8px; text-align: center; }
+        input { padding: 5px; }
+        button { padding: 6px 10px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>Simple CRUD App</h2>
+
+    <!-- Input Form -->
+    <input type="text" id="name" placeholder="Enter Name">
+    <input type="text" id="email" placeholder="Enter Email">
+    <button onclick="addData()">Add</button>
+
+    <!-- Table to show data -->
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tableData"></tbody>
+    </table>
+
+<script>
+    let data = [];
+
+    // CREATE + UPDATE
+    function addData() {
+        let name = document.getElementById('name').value;
+        let email = document.getElementById('email').value;
+
+        if (name === "" || email === "") {
+            alert("Enter both fields");
+            return;
+        }
+
+        if (document.getElementById("name").hasAttribute("data-edit-index")) {
+            // Update existing record
+            let index = document.getElementById("name").getAttribute("data-edit-index");
+            data[index] = { name, email };
+
+            document.getElementById("name").removeAttribute("data-edit-index");
+            document.querySelector("button").innerText = "Add";
+        } else {
+            // Add new record
+            data.push({ name, email });
+        }
+
+        document.getElementById('name').value = "";
+        document.getElementById('email').value = "";
+        displayData();
+    }
+
+    // READ
+    function displayData() {
+        let table = "";
+        data.forEach((d, i) => {
+            table += `
+                <tr>
+                    <td>${d.name}</td>
+                    <td>${d.email}</td>
+                    <td>
+                        <button onclick="editData(${i})">Edit</button>
+                        <button onclick="deleteData(${i})">Delete</button>
+                    </td>
+                </tr>`;
+        });
+        document.getElementById("tableData").innerHTML = table;
+    }
+
+    // EDIT
+    function editData(index) {
+        document.getElementById("name").value = data[index].name;
+        document.getElementById("email").value = data[index].email;
+        document.getElementById("name").setAttribute("data-edit-index", index);
+        document.querySelector("button").innerText = "Update";
+    }
+
+    // DELETE
+    function deleteData(index) {
+        data.splice(index, 1);
+        displayData();
+    }
+</script>
+
+</body>
+</html>
